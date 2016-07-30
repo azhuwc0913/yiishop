@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50538
 File Encoding         : 65001
 
-Date: 2016-07-30 14:48:18
+Date: 2016-07-30 21:45:47
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -29,17 +29,19 @@ CREATE TABLE `admin` (
   `status` smallint(6) NOT NULL DEFAULT '10',
   `created_at` int(11) NOT NULL,
   `updated_at` int(11) NOT NULL,
-  `role` enum('user','admin') COLLATE utf8_unicode_ci DEFAULT NULL,
+  `role` varchar(200) COLLATE utf8_unicode_ci DEFAULT '',
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`),
   UNIQUE KEY `email` (`email`),
-  UNIQUE KEY `password_reset_token` (`password_reset_token`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+  UNIQUE KEY `password_reset_token` (`password_reset_token`),
+  KEY `role` (`role`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- ----------------------------
 -- Records of admin
 -- ----------------------------
-INSERT INTO `admin` VALUES ('1', 'admin11', 'BRsSNd8dp6U', '$2y$13$TLsdsv6cvgFVp0wmnPjZf.OUzbpWcQB6v.u.8DjiXXx1hfT3xipEy', null, 'admin@123.com', '10', '1469698521', '1469698521', 'admin');
+INSERT INTO `admin` VALUES ('1', 'admin11', 'BRsSNd8dp6U', '$2y$13$TLsdsv6cvgFVp0wmnPjZf.OUzbpWcQB6v.u.8DjiXXx1hfT3xipEy', null, 'admin@123.com', '10', '1469698521', '1469698521', '');
+INSERT INTO `admin` VALUES ('6', 'admin', 'gLakhEGK0MI73v89V9bJT-dzGkUfl36L', '$2y$13$UWlWpi283rPpbv77Kv7UXOF17Ym9liDW7tEVGbcxIbHaA1npByQc6', null, 'admin@admin.com', '10', '1469883501', '1469886173', '超级管理员');
 
 -- ----------------------------
 -- Table structure for `auth_assignment`
@@ -56,6 +58,8 @@ CREATE TABLE `auth_assignment` (
 -- ----------------------------
 -- Records of auth_assignment
 -- ----------------------------
+INSERT INTO `auth_assignment` VALUES ('管理员管理1', '5', '1469883421');
+INSERT INTO `auth_assignment` VALUES ('超级管理员', '6', '1469886173');
 
 -- ----------------------------
 -- Table structure for `auth_item`
@@ -82,7 +86,8 @@ INSERT INTO `auth_item` VALUES ('[admin/create]', '2', '创建管理员', null, 
 INSERT INTO `auth_item` VALUES ('[admin/index]', '2', '创建[[admin/index]]权限', null, null, '1469775012', '1469775012');
 INSERT INTO `auth_item` VALUES ('[admin/update]', '2', '后台管理员的更新操作', null, null, '1469778974', '1469778974');
 INSERT INTO `auth_item` VALUES ('[item/all]', '2', '创建[[item/all]]权限', null, null, '1469778992', '1469778992');
-INSERT INTO `auth_item` VALUES ('管理员管理1', '1', '管理员管理1', null, null, '1469781852', '1469799459');
+INSERT INTO `auth_item` VALUES ('管理员管理1', '1', '管理员管理1', null, null, '1469781852', '1469884501');
+INSERT INTO `auth_item` VALUES ('超级管理员', '1', '拥有最高的权限', null, null, '1469882704', '1469884520');
 
 -- ----------------------------
 -- Table structure for `auth_item_child`
@@ -101,8 +106,12 @@ CREATE TABLE `auth_item_child` (
 -- Records of auth_item_child
 -- ----------------------------
 INSERT INTO `auth_item_child` VALUES ('管理员管理1', '[admin/create]');
+INSERT INTO `auth_item_child` VALUES ('超级管理员', '[admin/create]');
 INSERT INTO `auth_item_child` VALUES ('管理员管理1', '[admin/index]');
+INSERT INTO `auth_item_child` VALUES ('超级管理员', '[admin/index]');
 INSERT INTO `auth_item_child` VALUES ('管理员管理1', '[admin/update]');
+INSERT INTO `auth_item_child` VALUES ('超级管理员', '[admin/update]');
+INSERT INTO `auth_item_child` VALUES ('超级管理员', '[item/all]');
 
 -- ----------------------------
 -- Table structure for `auth_rule`
