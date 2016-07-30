@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<h2>获得父节点</h2>
+<ul>
+    <li>哈尔滨</li>
+    <li>长春</li>
+    <li>吉林</li>
+</ul>
+</body>
+</html>
+<script>
+    var uls = document.getElementsByTagName('ul')[0];
+//
+//    console.log(uls.childNodes);
+//
+//    console.log(uls.childNodes.length);
+//
+//    var li_1 = document.getElementsByTagName('li')[1];
+//
+//    console.log(li_1.nextSibling.nextSibling);
+//
+//    console.log(li_1.previousSibling.previousSibling);
+//
+//    console.log(uls.firstChild.nextSibling);
+    console.log(uls.parentNode);
+
+    console.log(uls.parentNode.parentNode);
+
+    console.log(uls.parentNode.parentNode.parentNode);
+
+</script>

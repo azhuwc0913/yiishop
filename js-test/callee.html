@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<script>
+//    function jicheng(n){
+//        if(n==1){
+//           return 1;
+//        }
+//        return n*arguments.callee(n-1);
+//    }
+//    alert(jicheng(5));
+//    function f1(){
+//    var a =11;
+//    var b = 'jame';
+//
+//    function f2(){
+//        alert(b);
+//    }
+//    return f2;
+//}
+//    var ff = f1();
+//  //  console.log(ff);
+//    console.log(ff());
+</script>
+
+<body>
+<h1>获得文本节点对象</h1>
+<input id="username" type="text" value="jack" name="mingzi"/>
+<input id="useremail" type="text" value="jack@123.com" name="youxiang" />
+</body>
+</html>
+<script>
+    var hh = document.getElementsByTagName('h1')[0];
+    console.log(hh.firstChild.nodeValue);
+</script>

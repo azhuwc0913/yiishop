@@ -23,6 +23,9 @@ use yii\web\IdentityInterface;
 */
 class Admin extends ActiveRecord implements IdentityInterface
 {
+    public $password;
+    public $old_password;
+    public $confirm_password;
     const STATUS_DELETED = 0;
     const STATUS_ACTIVE = 10;
     const ROLE_USER = 10;
@@ -52,17 +55,23 @@ class Admin extends ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
-        [['username', 'email',], 'required'],
-        [['username', 'email'], 'string', 'max' => 255],
-        [['username'], 'unique'],
-        [['username'], 'match', 'pattern'=>'/^[a-z]\w*$/i'],
-        [['email'], 'unique'],
-        [['email'], 'email'],
+        ['username', 'filter', 'filter' => 'trim'],
+        ['username', 'required'],
+        ['username', 'unique',  'message' => 'This username has already been taken.'],
+        ['username', 'string', 'min' => 2, 'max' => 255],
+
+        ['email', 'filter', 'filter' => 'trim'],
+        ['email', 'required'],
+        ['email', 'email'],
+        ['email', 'string', 'max' => 255],
+        ['email', 'unique', 'message' => 'This email address has already been taken.'],
+
+        [['password','confirm_password'], 'safe'],
+        ['confirm_password', 'compare', 'compareAttribute' => 'password','message'=>'两次输入的密码不一致'],
+        ['password', 'string', 'min' => 6],
         ['status', 'default', 'value' => self::STATUS_ACTIVE],
         ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
-        ['role', 'default', 'value' => self::ROLE_USER],
-        ['auth_key', 'default', 'value' => self::AUTH_KEY],
-        ['role', 'in', 'range' => [self::ROLE_USER]],
+        ['role','safe']
         ];
     }
 

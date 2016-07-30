@@ -38,7 +38,7 @@ class AuthItemForm extends ActiveRecord
         return [
             [['name', 'type'], 'required'],
             ['name', 'filter', 'filter'=>'trim'],
-            ['name', 'unique', 'targetClass' => '\backend\models\AuthItem', 'message'=> '此名称已经被占用', 'on'=>self::SCENARIOS_CREATE],
+            ['name', 'unique', 'targetClass' => AuthItem::className(), 'message'=> '此名称已经被占用', 'on'=>self::SCENARIOS_CREATE],
             [['name', 'description'], 'string', 'max'=>255],
         ];
     }
