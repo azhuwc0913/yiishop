@@ -149,7 +149,7 @@ body {
                 <ul>
                     <li class="menu-item"><a href="<?php echo \yii\helpers\Url::to(['admin/index'])?>" target="main-frame">管理员列表</a></li>
                     <li class="menu-item"><a href="<?php echo \yii\helpers\Url::to(['auth-item/index'])?>" target="main-frame">角色，权限列表</a></li>
-                    <li class="menu-item"><a href="userMessage.html" target="main-frame">会员留言</a></li>
+                    <li class="menu-item"><a href="<?php echo \yii\helpers\Url::to(['member-level/index'])?>" target="main-frame">会员列表</a></li>
                 </ul>
             </li>
         </ul>

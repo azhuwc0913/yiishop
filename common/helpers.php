@@ -6,8 +6,10 @@
  * Time: 14:57
  */
 
+    //打印函数
 function dd($data){
     echo '<pre>';
     var_dump($data);
     die;
 }
+
