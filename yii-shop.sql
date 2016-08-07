@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50538
 File Encoding         : 65001
 
-Date: 2016-08-05 21:23:42
+Date: 2016-08-07 20:31:55
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -53,7 +53,7 @@ CREATE TABLE `attribute` (
   `attr_value` varchar(120) NOT NULL COMMENT '属性的可选值',
   `type_id` int(11) NOT NULL COMMENT '属性所属的类型',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COMMENT='属性表';
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COMMENT='属性表';
 
 -- ----------------------------
 -- Records of attribute
@@ -63,6 +63,7 @@ INSERT INTO `attribute` VALUES ('2', '内存容量', '0', '32G,64G,128G', '1');
 INSERT INTO `attribute` VALUES ('3', '颜色', '1', '玫瑰金,深邃黑,月光白', '1');
 INSERT INTO `attribute` VALUES ('4', '外观样式', '1', '翻盖,直板,折叠', '1');
 INSERT INTO `attribute` VALUES ('5', '操作系统', '0', '', '1');
+INSERT INTO `attribute` VALUES ('6', 'cup', '1', '4核,8核,16核', '1');
 
 -- ----------------------------
 -- Table structure for `auth_assignment`
@@ -209,7 +210,7 @@ INSERT INTO `goods` VALUES ('4', '华为p8', '1', '2500', '2599', '0', null, nul
 INSERT INTO `goods` VALUES ('5', '三星note5', '7', '5688', '5888', '0', null, null, null, '0', '1', '0', '1', '1', '1', 'uploads/20160805/14703663999927.jpg', 'uploads/20160805/thumb_014703663999927.jpg', '1470366399', '<p><strong>wddddddddddddddddddddddddddddd</strong></p>');
 INSERT INTO `goods` VALUES ('6', '锤子手机', '7', '1999', '2199', '1', '1900', '1470412800', '1470672000', '0', '1', '1', '1', '0', '1', 'uploads/20160805/14703664898705.jpg', 'uploads/20160805/thumb_014703664898705.jpg', '1470366489', '<p><em>带我去去去去去去去去去去去去去去去去去去去去去去去</em></p>');
 INSERT INTO `goods` VALUES ('7', '黑莓', '7', '3500', '3680', '0', null, null, null, '0', '1', '0', '1', '1', '1', 'uploads/20160805/14703666081510.jpg', 'uploads/20160805/thumb_014703666081510.jpg', '1470366608', '<p><strong>围鹅鹅鹅鹅鹅鹅鹅鹅鹅鹅鹅鹅鹅鹅鹅鹅鹅鹅</strong></p>');
-INSERT INTO `goods` VALUES ('8', '索尼', '7', '4800', '4900', '0', null, null, null, '0', '1', '1', '0', '1', '1', 'uploads/20160805/14703983945543.jpg', 'uploads/20160805/thumb_014703983945543.jpg', '1470398394', '<p>到我的的决定我的&nbsp;<img src=\"/ueditor/php/upload/image/20160805/1470398346875094.jpg\" title=\"1470398346875094.jpg\" alt=\"images (9).jpg\"/></p>');
+INSERT INTO `goods` VALUES ('8', '索尼X系列', '7', '4800', '4900', '1', '4500', '1470412800', '1470758400', '0', '1', '1', '0', '1', '1', '', 'uploads/20160805/thumb_014703983945543.jpg', '1470398394', '<p>到我的的决定我的&nbsp;<img src=\"/ueditor/php/upload/image/20160805/1470398346875094.jpg\" title=\"1470398346875094.jpg\" alt=\"images (9).jpg\"/></p>');
 
 -- ----------------------------
 -- Table structure for `goods_attr`
@@ -224,19 +225,19 @@ CREATE TABLE `goods_attr` (
   PRIMARY KEY (`id`),
   KEY `goods_id` (`goods_id`),
   KEY `attr_id` (`attr_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=68 DEFAULT CHARSET=utf8 COMMENT='商品属性关联表';
+) ENGINE=InnoDB AUTO_INCREMENT=69 DEFAULT CHARSET=utf8 COMMENT='商品属性关联表';
 
 -- ----------------------------
 -- Records of goods_attr
 -- ----------------------------
-INSERT INTO `goods_attr` VALUES ('1', '1', '1', '4.7', '10');
-INSERT INTO `goods_attr` VALUES ('2', '1', '1', '5.5', '20');
+INSERT INTO `goods_attr` VALUES ('1', '1', '1', '4.7', '100');
+INSERT INTO `goods_attr` VALUES ('2', '1', '1', '5.5', '201');
 INSERT INTO `goods_attr` VALUES ('3', '1', '2', '32G', '0');
-INSERT INTO `goods_attr` VALUES ('4', '1', '3', '玫瑰金', '30');
-INSERT INTO `goods_attr` VALUES ('5', '1', '3', '深邃黑', '40');
-INSERT INTO `goods_attr` VALUES ('6', '1', '3', '月光白', '50');
-INSERT INTO `goods_attr` VALUES ('7', '1', '4', '翻盖', '60');
-INSERT INTO `goods_attr` VALUES ('8', '1', '4', '直板', '70');
+INSERT INTO `goods_attr` VALUES ('4', '1', '3', '玫瑰金', '301');
+INSERT INTO `goods_attr` VALUES ('5', '1', '3', '深邃黑', '401');
+INSERT INTO `goods_attr` VALUES ('6', '1', '3', '月光白', '501');
+INSERT INTO `goods_attr` VALUES ('7', '1', '4', '翻盖', '601');
+INSERT INTO `goods_attr` VALUES ('8', '1', '4', '直板', '701');
 INSERT INTO `goods_attr` VALUES ('9', '1', '5', 'IOS', '0');
 INSERT INTO `goods_attr` VALUES ('10', '2', '1', '5.5', '10');
 INSERT INTO `goods_attr` VALUES ('11', '2', '1', '6.5', '20');
@@ -298,6 +299,28 @@ INSERT INTO `goods_attr` VALUES ('66', '8', '4', '翻盖', '50');
 INSERT INTO `goods_attr` VALUES ('67', '8', '5', 'Andriod', '0');
 
 -- ----------------------------
+-- Table structure for `goods_number`
+-- ----------------------------
+DROP TABLE IF EXISTS `goods_number`;
+CREATE TABLE `goods_number` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `goods_id` int(10) unsigned NOT NULL,
+  `goods_attr_id` varchar(120) NOT NULL,
+  `number` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=24 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of goods_number
+-- ----------------------------
+INSERT INTO `goods_number` VALUES ('21', '7', '52,55,57', '20');
+INSERT INTO `goods_number` VALUES ('20', '8', '62,64,66', '122');
+INSERT INTO `goods_number` VALUES ('19', '8', '62,65,66', '2');
+INSERT INTO `goods_number` VALUES ('18', '8', '61,64,66', '13');
+INSERT INTO `goods_number` VALUES ('22', '7', '53,55,58', '20');
+INSERT INTO `goods_number` VALUES ('23', '7', '52,56,58', '20');
+
+-- ----------------------------
 -- Table structure for `goods_pics`
 -- ----------------------------
 DROP TABLE IF EXISTS `goods_pics`;
@@ -307,7 +330,7 @@ CREATE TABLE `goods_pics` (
   `sm_pic` varchar(120) DEFAULT NULL,
   `goods_id` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8 COMMENT='商品图片表';
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8 COMMENT='商品图片表';
 
 -- ----------------------------
 -- Records of goods_pics
@@ -330,8 +353,8 @@ INSERT INTO `goods_pics` VALUES ('15', 'uploads/20160805/14703664896076.jpg', 'u
 INSERT INTO `goods_pics` VALUES ('16', 'uploads/20160805/14703666087454.jpg', 'uploads/20160805/thumb_014703666087454.jpg', '7');
 INSERT INTO `goods_pics` VALUES ('17', 'uploads/20160805/14703666083091.jpg', 'uploads/20160805/thumb_014703666083091.jpg', '7');
 INSERT INTO `goods_pics` VALUES ('18', 'uploads/20160805/14703666083818.jpg', 'uploads/20160805/thumb_014703666083818.jpg', '7');
-INSERT INTO `goods_pics` VALUES ('19', 'uploads/20160805/14703983956240.jpg', 'uploads/20160805/thumb_014703983956240.jpg', '8');
-INSERT INTO `goods_pics` VALUES ('20', 'uploads/20160805/14703983955600.jpg', 'uploads/20160805/thumb_014703983955600.jpg', '8');
+INSERT INTO `goods_pics` VALUES ('21', 'uploads/20160807/14705499484199.jpg', 'uploads/20160807/thumb_014705499484199.jpg', '8');
+INSERT INTO `goods_pics` VALUES ('22', 'uploads/20160807/14705499489503.jpg', 'uploads/20160807/thumb_014705499489503.jpg', '8');
 
 -- ----------------------------
 -- Table structure for `member_level`
