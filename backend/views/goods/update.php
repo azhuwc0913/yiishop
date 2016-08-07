@@ -84,7 +84,7 @@
                 <tr>
                     <td align="right">促销日期:</td>
                     <td align="left">
-                        <input type="text" class = "promote" name="Goods[promote_start_time]" value="<?php if($model->is_promote==1){ echo Html::encode(date('Y-m-d', $model->promote_start_time));}?>" id="st" disabled="disabled">-<input type="text" class = "promote" name="Goods[promote_end_time]"  value="<?php if($model->is_promote==1){ echo Html::encode(date('Y-m-d', $model->promote_end_time));}?>" id="et" disabled="disabled">
+                        <input type="text" class = "promote" name="Goods[promote_start_time]" value="<?php if($model->is_promote==1){ echo Html::encode(date('Y-m-d H:i:s', $model->promote_start_time));}?>" id="st" disabled="disabled">-<input type="text" class = "promote" name="Goods[promote_end_time]"  value="<?php if($model->is_promote==1){ echo Html::encode(date('Y-m-d H:i:s', $model->promote_end_time));}?>" id="et" disabled="disabled">
                     </td>
                 </tr>
 
@@ -246,12 +246,13 @@
         $('.table_content').eq(i).show();
 
         $('.tab-front').removeClass('tab-front').addClass('tab-back');
+
         $(this).removeClass('tab-back').addClass('tab-front');
     });
     //添加时间插件
     $.timepicker.setDefaults($.timepicker.regional['zh-CN']);
-    $("#st").datepicker({dateFormat: "yy-mm-dd"});
-    $("#et").datepicker({dateFormat: "yy-mm-dd"});
+    $("#st").datetimepicker();
+    $("#et").datetimepicker();
 
     //编辑器
     UE.getEditor('goods_desc', {
@@ -343,13 +344,15 @@
 
     //ajax删除图片
     function dropImg(o){
-        var id ="<?php echo $id;?>";
+        var id = $(o).attr('id');
+
         $.ajax({
             type:'get',
-            url:"<?php echo Url::to(['goods/ajaxDeleteGoodsPics'])?>?goods_id="+id,
+            dataType:'json',
+            url:"<?php echo Url::to(['goods/ajax-delete-goods-pics'])?>?id="+id,
             success:function(msg){
                 if(msg.status==1){
-                    $(this).parent().remove();
+                    $(o).parent().remove();
                     alert('删除图片成功！');
                 }else{
                     alert('删除图片失败！');

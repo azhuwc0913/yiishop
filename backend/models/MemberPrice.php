@@ -60,4 +60,12 @@ class MemberPrice extends \yii\db\ActiveRecord
         $query = new Query();
         return $data = $query->select('a.*, b.level_name, b.rate')->from('member_price a')->leftJoin('member_level b', 'b.id=a.level_id')->where('a.goods_id=:goods_id', [':goods_id'=>$id])->all();
     }
+
+    public function deleteGoodsMemberPirce($goods_id){
+        $con = Yii::$app->db;
+
+        $sql = "DELETE FROM `member_price` WHERE `goods_id`=$goods_id";
+
+        $con->createCommand($sql)->execute();
+    }
 }

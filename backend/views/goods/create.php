@@ -182,8 +182,8 @@ $this->params['breadcrumbs'][] = $this->title;
     });
     //添加时间插件
     $.timepicker.setDefaults($.timepicker.regional['zh-CN']);
-    $("#st").datepicker({dateFormat: "yy-mm-dd"});
-    $("#et").datepicker({dateFormat: "yy-mm-dd"});
+    $("#st").datetimepicker();
+    $("#et").datetimepicker();
 
     //编辑器
     UE.getEditor('goods_desc', {

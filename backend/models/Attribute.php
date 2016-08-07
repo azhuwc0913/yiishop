@@ -3,6 +3,7 @@
 namespace backend\models;
 
 use Yii;
+use yii\db\Query;
 
 /**
  * This is the model class for table "attribute".
@@ -51,5 +52,12 @@ class Attribute extends \yii\db\ActiveRecord
 
     public function getType(){
         return $this->hasOne(Type::className(), ['id'=>'type_id']);
+    }
+
+    public function findAddGoodsAttrData($ids){
+        $query = new Query();
+
+        return $data = $query->select('a.id attr_id, a.attr_name, a.attr_type, a.attr_value value')->from('attribute a')->where(['id'=>$ids])->all();
+
     }
 }

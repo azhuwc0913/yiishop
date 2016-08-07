@@ -33,6 +33,16 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             'shop_price',
             'market_price',
+            ['class' => 'yii\grid\ActionColumn','header' => '操作',],
+            [
+                'label'=>'更多操作',
+                'format'=>'raw',
+                'value' => function($data){
+                    $url = "http://admin.yii_shop.com/goods/kucun?id=".$data->id;
+                    return Html::a('添加商品库存', $url);
+                }
+            ],
+
             // 'is_promote',
             // 'promote_price',
             // 'promote_start_time:datetime',
@@ -48,7 +58,7 @@ $this->params['breadcrumbs'][] = $this->title;
             // 'addtime:datetime',
             // 'goods_desc:ntext',
 
-            ['class' => 'yii\grid\ActionColumn'],
+
         ],
     ]); ?>
 </div>

@@ -2,8 +2,10 @@
 
 namespace backend\controllers;
 
+use backend\models\Attribute;
 use backend\models\Category;
 use backend\models\GoodsAttr;
+use backend\models\GoodsNumber;
 use backend\models\GoodsPics;
 use backend\models\MemberLevel;
 use backend\models\MemberPrice;
@@ -11,6 +13,7 @@ use backend\models\Type;
 use Yii;
 use backend\models\Goods;
 use backend\models\GoodsSearch;
+use yii\caching\DbDependency;
 use yii\db\Query;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -190,11 +193,37 @@ class GoodsController extends Controller
         //取出商品属性及其价格
         $goods_attr_data = $goods_attr_model->get_goods_attr($id);
 
+        $old_goods_attr_ids = array_keys($goods_attr_data);
+
+
         //取出商品对应的类型所对应的属性数据
         $attributeData = (new Type())->getTypeAttributeData($model->type_id);
 
-//        var_dump($attributeData);
-//        dd($goods_attr_data);
+        //判断是否有新增的属性,获取所有的属性数据（id）
+        $goods_attr_ids = Attribute::find()->select('id')->where(['=', 'type_id', $model->type_id])->asArray()->all();
+
+
+        $new_goods_attr_ids = [];
+
+        foreach($goods_attr_ids as $k=>$v){
+
+            $new_goods_attr_ids[] = $v['id'];
+        }
+
+        //如果有数据则代表新增加了属性，将新属性在更新页面也展示出来
+        $add_goods_attr_ids = array_diff($new_goods_attr_ids, $old_goods_attr_ids);
+
+
+        //取出对应的数据
+        if($add_goods_attr_ids){
+            $add_goods_attr_data = [(new Attribute())->findAddGoodsAttrData($add_goods_attr_ids)];
+        }
+
+        if($add_goods_attr_data){
+            $goods_attr_data = array_merge($goods_attr_data, $add_goods_attr_data);
+        }
+
+        dd($goods_attr_data);
         //取出商品图片和略缩图
         $goods_pics = (new GoodsPics())->get_goods_pics($id);
 
@@ -261,7 +290,11 @@ class GoodsController extends Controller
             }
 
             //添加新的商品图片
-
+            //接收多张图片
+            $files = UploadedFile::getInstances($goods_pic_model, 'pic');
+            if(!is_null($files)){
+                (new GoodsPics())->add_goods_pic($files, $goods_pic_model, $id);
+            }
 
              return $this->redirect(['view', 'id' => $model->id]);
         } else {
@@ -278,6 +311,16 @@ class GoodsController extends Controller
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
+        //删除掉商品的logo和sm_logo
+        (new Goods())->deleteGoodsLogo($id);
+        //删除掉商品图片的数据
+        (new GoodsPics())->deleteGoodsPics($id);
+
+        //删除掉商品属性数据
+        (new GoodsAttr())->deleteGoodsAttrs($id);
+
+        //删除商品的会员信息
+        (new MemberPrice())->deleteGoodsMemberPirce($id);
 
         return $this->redirect(['index']);
     }
@@ -312,7 +355,80 @@ class GoodsController extends Controller
     }
 
 
-    public function ajaxDeleteGoodsPics($goods_id){
-        //从数据库中将
+    public function actionAjaxDeleteGoodsPics($id){
+        //将商品的该图片从硬盘中删掉
+
+        $query = new Query();
+
+        $images = $query->select('a.pic, a.sm_pic')->from('goods_pics a')->where('id=:id',[':id'=>$id])->one();
+
+        deleteImage([$images['pic'], $images['sm_pic']]);
+        //从数据库中将商品删除
+        $imagemodel = GoodsPics::findOne($id);
+
+
+        $con = Yii::$app->db;
+
+        $sql = "DELETE FROM `goods_pics` WHERE id=$id";
+
+        $res = $con->createCommand($sql)->execute();
+
+        return json_encode(['status'=> 1]);
+    }
+
+    public function actionKucun($id){
+        //取出该商品的可选属性
+        $query = new Query();
+        $attr_data = $query->select('a.id,a.attr_value value, a.attr_id, b.attr_name')->from('goods_attr a')->leftJoin('attribute b', 'a.attr_id=b.id')->where(['a.goods_id'=>$id, 'b.attr_type'=>'1'])->all();
+
+        $data = [];
+        foreach($attr_data as $k=>$v){
+            $data[$v['attr_id']][] =$v;
+        }
+
+        //dd($data);
+        if(Yii::$app->request->isPost){
+
+            //先将原来的数据全部删除
+            (new GoodsNumber())->deleteGoodsNumber($id);
+            //判断是有几组
+            $number = count($_POST['ga'])/count($_POST['goods_number']);
+            static $k = 0;
+            $goods_attrs = array();
+            for($j=0; $j<count($_POST['goods_number']);$j++){
+            for($i=0; $i<$number; $i++){
+
+              $goods_attrs[$j][] = $_POST['ga'][$k];
+                $k++;
+            }
+            }
+            $goods_attr_ids = [];
+
+           foreach($goods_attrs as $k=>$v){
+               asort($v);
+               $goods_attr_ids[] = implode(',', $v);
+           }
+
+            $con = Yii::$app->db;
+            if($goods_attr_ids){
+            foreach($goods_attr_ids as $k=>$v){
+                if($v==',,'){
+                    continue;
+                }
+
+                $sql = "INSERT INTO `goods_number` values(null, $id, '{$v}', '{$_POST['goods_number'][$k]}')";
+
+                $con->createCommand($sql)->execute();
+            }
+            }
+
+            return $this->redirect(['goods/index']);
+        }
+        //取出原有的商品库存数据
+        $goods_number_data = GoodsNumber::find()->where('goods_id=:goods_id', [':goods_id'=>$id])->asArray()->all();
+
+
+
+        return $this->render('kucun', compact('data', 'goods_number_data'));
     }
 }

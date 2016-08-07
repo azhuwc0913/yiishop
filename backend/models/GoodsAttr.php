@@ -131,4 +131,12 @@ class GoodsAttr extends \yii\db\ActiveRecord
 
         }
     }
+
+    public function deleteGoodsAttrs($goods_id){
+        $con = Yii::$app->db;
+
+        $sql = "DELETE FROM `goods_attr` WHERE `goods_id`=$goods_id";
+
+        $con->createCommand($sql)->execute();
+    }
 }

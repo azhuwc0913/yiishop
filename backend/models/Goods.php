@@ -84,4 +84,15 @@ class Goods extends \yii\db\ActiveRecord
 
         return Category::find()->where(['id'=>$this->cat_id])->one();
     }
+
+    public function getId(){
+        return $this->id;
+    }
+    public function deleteGoodsLogo($goods_id){
+        $images = Goods::find()->where('id=:id', [':id'=>$goods_id])->asArray()->one();
+        deleteImage($images['logo'], $images['sm_logo']);
+        $con = Yii::$app->db;
+        $sql = "DELETE FROM `goods_pics` WHERE `goods_id`=$goods_id";
+        $con->createCommand($sql)->execute();
+    }
 }

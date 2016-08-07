@@ -64,4 +64,10 @@ class GoodsPics extends \yii\db\ActiveRecord
                                 ->where('a.goods_id=:goods_id', [':goods_id'=>$id])
                                 ->all();
     }
+
+    public function deleteGoodsPics($goods_id){
+        $con = Yii::$app->db;
+        $sql = "DELETE FROM `goods_pics` WHERE `goods_id`=$goods_id";
+        $con->createCommand($sql)->execute();
+    }
 }
