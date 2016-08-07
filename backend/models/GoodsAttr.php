@@ -77,7 +77,7 @@ class GoodsAttr extends \yii\db\ActiveRecord
     public function get_goods_attr($id){
         $query = new Query();
 
-        $_data = $query->select('a.*, b.attr_name')
+        $_data = $query->select('a.*, b.attr_name, b.attr_value as value, b.attr_type')
             ->from('goods_attr a')
             ->leftJoin('attribute b', 'b.id=a.attr_id')
             ->where('a.goods_id=:goods_id', [':goods_id'=>$id])
@@ -89,5 +89,46 @@ class GoodsAttr extends \yii\db\ActiveRecord
         }
 
         return $data;
+    }
+
+    public function getGoodsAttrIds($goods_id){
+        $query = new Query();
+        return $data =    $query->select('a.id')
+                                ->from('goods_attr a')
+                                ->where('a.goods_id=:goods_id', [':goods_id'=>$goods_id])
+                                ->all();
+    }
+
+    public function deleteGoodsAttrIds($ids){
+        $con = Yii::$app->db;
+
+        $ids = implode(',', $ids);
+
+        $sql = "DELETE FROM `goods_attr` WHERE id in ($ids)";
+
+        $con->createCommand($sql)->execute();
+    }
+
+    public function updateGoodsAttr($gas, $gps, $goods_id){
+
+        $con = Yii::$app->db;
+        foreach($gas as $k=>$v){
+
+            foreach($v as $k1=>$v1){
+               if(empty($v1)){
+                  continue;
+               }
+
+                $price = isset($gps[$k][$k1])?$gps[$k][$k1]:'0.00';
+
+                $sql = "UPDATE `goods_attr` SET attr_value='$v1',attr_price='$price' WHERE id=$k";
+
+//                echo $sql.'<br />';
+
+                $con->createCommand($sql)->execute();
+
+            }
+
+        }
     }
 }

@@ -3,6 +3,7 @@
 namespace backend\models;
 
 use Yii;
+use yii\db\Query;
 
 /**
  * This is the model class for table "type".
@@ -44,5 +45,10 @@ class Type extends \yii\db\ActiveRecord
 
     public function getTypeAttribute(){
         return $this->hasMany(Attribute::className(), ['type_id'=>'id']);
+    }
+
+    public function getTypeAttributeData($type_id){
+        $query = new Query();
+        return $data = $query->select('*')->from('attribute')->where('type_id=:type_id',[':type_id'=>$type_id])->all();
     }
 }

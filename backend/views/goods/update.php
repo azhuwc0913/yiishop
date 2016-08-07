@@ -77,7 +77,7 @@
                 </tr>
                 <tr>
                     <td align="right">
-                        <input type="checkbox" value="1" <?php if($model->is_promote==1){echo "checked=true";}?> onclick="if($(this).prop('checked')){$('.promote').removeAttr('disabled');}else{$('.promote').attr('disabled', 'disabled')}">促销价:
+                        <input type="checkbox" value="1" name="Goods[is_promote]" <?php if($model->is_promote==1){echo "checked=true";}?> onclick="if($(this).prop('checked')){$('.promote').removeAttr('disabled');}else{$('.promote').attr('disabled', 'disabled')}">促销价:
                     </td>
                     <td align="left"><input class = "promote" type="text" name="Goods[promote_price]" disabled="disabled" value="<?php if($model->is_promote==1){ echo Html::encode($model->promote_price);}?>"></td>
                 </tr>
@@ -143,16 +143,71 @@
                 </tr>
                 <tr><td>&nbsp;&nbsp;</td><td id="tbody-goodsAttr" style="padding:0;width: 70%" align="left">
                         <table align="left">
-                        <?php foreach($$goods_attr_data as $k=>$v):?>
-                            <tr></tr>
+                            <?php
+                                //判断是否已经出现过该属性id
+                                $exist_id = array();?>
+                        <?php foreach($goods_attr_data as $k=>$v):?>
+
+                            <?php foreach($v as $k1=>$v1):?>
+                                <?php
+                                //判断属性是否是属性数据表中新增的数据,如果是,列举出来的时候前缀要加上new
+                                if(empty($v1['attr_value'])){
+                                    $prefix = 'new_';
+                                }else{
+                                    $prefix = 'old_';
+                                }
+                                ?>
+                                <?php if(in_array($v1['attr_id'], $exist_id)){
+                                    $option = '[-]';
+                                }else{
+                                    $exist_id[] = $v1['attr_id'];
+                                    $option = '[+]';
+                                }?>
+                            <tr>
+                                <?php if($v1['attr_type']==1):?>
+                                <?php echo "<td align=\"right\"><a href='#' onclick='addNew(this)'>$option</a>";?>
+                                <?= Html::encode($v1['attr_name'])?></td>
+                                <?php else: ?>
+                                 <td align="right"><?= Html::encode($v1['attr_name'])?></td>
+                                <?php endif;?>
+                                <td>
+                                    <?php if(!$v1['value']):?>
+                                        <?php echo "<input type='text' name='".$prefix."ga[".$v1['id']."][".$k."]' value='{$v1['attr_value']}'>";?>
+                                   <?php else:?>
+                                        <?php $attrs = explode(',', $v1['value'])?>
+                                        <?php echo "<select style='width:100px;' name='".$prefix."ga[".$v1['id']."][".$k."]' >";?>
+
+                                            <option value="">请选择</option>
+                                            <?php foreach($attrs as $v2):?>
+                                                <?php if($v2==$v1['attr_value']){$selected="selected='selected'";}else{$selected='';}?>
+                                                <option <?php echo $selected?> value="<?php echo $v2?>"><?php echo $v2?></option>
+                                                <?php endforeach;?>
+                                        </select>
+                                        <?php if($v1['attr_type']==1):?>
+                                        <?php echo "<input type='text' name='".$prefix."gp[".$v1['id']."][".$k."]' value='{$v1['attr_price']}'>";?>
+                                        <?php endif;?>
+                                        <?php endif;?>
+                                </td></tr>
+                            <?php endforeach;?>
                         <?php endforeach;?>
-                    </td></tr>
+                            </table>
             </table>
             <!-- 商品图片 -->
             <table class="table_content" cellspacing="1" cellpadding="3" width="100%" style="display:none;">
                 <tr>
                     <td colspan="2" align="center">商品图片：</td><br />
                 </tr>
+
+                    <tr>
+                        <td>
+                        <?php foreach($goods_pics as $k=>$v):?>
+                            <div style="float:left; text-align:center; border: 1px solid #DADADA; margin: 4px; padding:2px;">
+                            <a href="javascript:;" id="<?php echo $v['id']?>" onclick="if (confirm('您确实要删除该图片吗？')) dropImg(this)">
+                        [-]</a><br /><?php showImage($v['sm_pic'], 100, 100)?></div>
+                        <?php endforeach;?>
+                        </td>
+                    </tr>
+
                 <tr>
                     <td align="right" style="width:45%;"><a href="#" onclick="addNewImage(this)">[+]</a>图片描述</td>
                     <td align="left"><?= $form->field($goods_pic_model, 'pic[]')->fileInput(['multiple' => ''])->label('添加多张商品图片')?></td>
@@ -250,8 +305,24 @@
     function addNew(o){
         var parent_str = $(o).parent().parent();
         var str = parent_str.clone();
+
+
         if($(o).html()=='[+]'){
+            //要将前面的old前缀换成new
+            var old_select_name = str.find("select").attr('name');
+
+            var old_input_name = str.find("input").attr('name');
+
+            var new_select_name = old_select_name.replace('old_','new_');
+
+            var new_input_name = old_input_name.replace('old_','new_');
+
+            str.find('select').attr('name', new_select_name);
+
+            str.find('input').attr('name', new_input_name);
+
             parent_str.after(str);
+
             str.find('a').html('[-]');
         }else{
             parent_str.remove();
@@ -268,5 +339,22 @@
         }else{
             parent_str.remove();
         }
+    }
+
+    //ajax删除图片
+    function dropImg(o){
+        var id ="<?php echo $id;?>";
+        $.ajax({
+            type:'get',
+            url:"<?php echo Url::to(['goods/ajaxDeleteGoodsPics'])?>?goods_id="+id,
+            success:function(msg){
+                if(msg.status==1){
+                    $(this).parent().remove();
+                    alert('删除图片成功！');
+                }else{
+                    alert('删除图片失败！');
+                }
+            }
+        });
     }
 </script>

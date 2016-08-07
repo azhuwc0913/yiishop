@@ -59,7 +59,7 @@ class GoodsPics extends \yii\db\ActiveRecord
 
     public function get_goods_pics($id){
         $query = new Query();
-        return $data = $query->select('a.pic,a.sm_pic')
+        return $data = $query->select('a.id,a.pic,a.sm_pic')
                                 ->from('goods_pics a')
                                 ->where('a.goods_id=:goods_id', [':goods_id'=>$id])
                                 ->all();

@@ -49,10 +49,23 @@ function dd($data){
     function showImage($src, $width='', $height=''){
         $rootPath = Yii::getAlias("@app");
         if($width){
-          echo '<img src="/$src" width="$width">';
+            echo "<img src='/$src' width='$width'>";
         } elseif($height){
-            echo '<img src="/$src" height="$height">';
+            echo "<img src='/$src' height='$height'>";
+        }elseif($width && $height){
+            echo "<img src='/$src'  width='$width' height='$height'>";
         }else{
             echo "<img src='/$src'>";
+        }
+    }
+
+    //删掉商品图片
+    function deleteImage($images=array()){
+
+        $rootPath = Yii::getAlias("@app");
+
+        foreach($images as $k=>$v){
+          chmod($rootPath.'/web/'.$v, 0777);
+            unlink($rootPath.'/web/'.$v);
         }
     }

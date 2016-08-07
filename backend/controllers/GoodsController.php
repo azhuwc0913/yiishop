@@ -164,7 +164,14 @@ class GoodsController extends Controller
 
         $model = $this->findModel($id);
 
+        $logo = $model->logo;
+
+        $sm_logo = $model->sm_logo;
+
+
         $goods_pic_model = new GoodsPics();
+
+        $goods_attr_model = new GoodsAttr();
 
         $member_model = new MemberLevel();
         //取出所有的分类数据
@@ -181,18 +188,84 @@ class GoodsController extends Controller
         $member_price = (new MemberPrice())->get_member_price($id);
 
         //取出商品属性及其价格
-        $goods_attr_data = (new GoodsAttr())->get_goods_attr($id);
+        $goods_attr_data = $goods_attr_model->get_goods_attr($id);
 
-        dd($goods_attr_data);
+        //取出商品对应的类型所对应的属性数据
+        $attributeData = (new Type())->getTypeAttributeData($model->type_id);
+
+//        var_dump($attributeData);
+//        dd($goods_attr_data);
         //取出商品图片和略缩图
         $goods_pics = (new GoodsPics())->get_goods_pics($id);
 
+        if (Yii::$app->request->isPost) {
+            //将商品基本信息的数据赋值给goods模型
+            $model->attributes = $_POST['Goods'];
+
+             //判断用户是否更新了logo,如果更新了的话就将原来的logo删掉
+            $file = \yii\web\UploadedFile::getInstance($model, 'logo');
+
+            //如果不为空则表示用户修改了logo
+            if(!is_null($file)){
+                //将原来的logo删掉
+                deleteImage([$logo, $sm_logo]);
+
+                $image = uploadFile($model, [[120, 120]], $file);
+
+                $model->logo = $image[0];
+
+                $model->sm_logo = $image[1];
+            }
+
+            //判断用户是否将产品修改为促销,是的话将促销时间进行修改
+            if(isset($_POST['Goods']['promote_start_time']) && isset($_POST['Goods']['promote_end_time'])){
+                $model->promote_start_time = strtotime($_POST['Goods']['promote_start_time']);
+                $model->promote_end_time = strtotime($_POST['Goods']['promote_end_time']);
+            }
+
+            $res = $model->save();
+            if(!$res){
+                dd('修改商品失败');
+            }
+            //商品属性的修改
+            //判断是否有删除属性
+            $old_attr_id = array_keys($_POST['old_ga']);
+
+            $old_attr_ids = $goods_attr_model->getGoodsAttrIds($id);
+
+            $ids = [];
+
+            foreach($old_attr_ids as $k=>$v){
+              $ids[] = $v['id'];
+            }
+
+            $delete_old_ids = array_diff($ids, $old_attr_id);
+
+            if($delete_old_ids){
+                $goods_attr_model->deleteGoodsAttrIds($delete_old_ids);
+            }
 
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            //如果有要修改的数据,就是以old开头的
+            $old_gas = $_POST['old_ga'];
+            $old_gps = $_POST['old_gp'];
+            if($old_gas && $old_gps) {
+                $goods_attr_model->updateGoodsAttr($old_gas, $old_gps, $id);
+            }
+
+            //如果有新增的数据,就将其存在数据库里
+            $new_gas = isset($_POST['new_ga'])?$_POST['new_ga']:'';
+            $new_gps = isset($_POST['new_gp'])?$_POST['new_gp']:'';
+            if($new_gas && $new_gps){
+               $goods_attr_model->add_goods_attr($new_gas, $new_gps, $id);
+            }
+
+            //添加新的商品图片
+
+
+             return $this->redirect(['view', 'id' => $model->id]);
         } else {
-            return $this->render('update', compact('model', 'member_price', 'goods_attr_data', 'goods_pics', 'cateData', 'typeData', 'member_data', 'goods_pic_model'));
+            return $this->render('update', compact('id', 'model', 'member_price', 'goods_attr_data', 'goods_pics', 'cateData', 'typeData', 'member_data', 'goods_pic_model', 'attributeData'));
         }
     }
 
@@ -236,5 +309,10 @@ class GoodsController extends Controller
                 'data' => $AttributeData
             ]);
         }
+    }
+
+
+    public function ajaxDeleteGoodsPics($goods_id){
+        //从数据库中将
     }
 }
