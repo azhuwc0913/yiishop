@@ -65,7 +65,7 @@ function dd($data){
         $rootPath = Yii::getAlias("@app");
 
         foreach($images as $k=>$v){
-          chmod($rootPath.'/web/'.$v, 0777);
+          //chmod($rootPath.'/web/'.$v, 0777);
             unlink($rootPath.'/web/'.$v);
         }
     }

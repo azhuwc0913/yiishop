@@ -190,6 +190,30 @@
                                 </td></tr>
                             <?php endforeach;?>
                         <?php endforeach;?>
+                            <?php if(isset($add_goods_attr_data)):?>
+                                <?php foreach($add_goods_attr_data as $v):?>
+                                    <tr>
+                                <?php if($v['attr_type']==1):?>
+                                      <?php echo "<td align='right'><a href='#' onclick='addNewAttr(this)'>[+]</a>".$v['attr_name']."</td>";?>
+                                    <?php else:?>
+                                    <?php echo "<td align='right'>".$v['attr_name']."</td>";?>
+                                    <?php endif;?>
+                                        <?php if(!$v['value']):?>
+                                    <?php echo  "<td align='left'><input type='text' name='ga[". $v['id']."][]'/>";?>
+                                       <?php else:?>
+                                    <?php echo "<td align='left'><select name='ga[".$v['id']."][]'><option value=''>请选择</option>";?>
+                                    <?php $attrs = explode(',', $v['value']);?>
+                                    <?php foreach($attrs as $v1):?>
+                                        <option value="<?php echo $v1?>"><?php echo $v1?></option>
+                                        <?php endforeach;?>
+                                    <?php echo "</select>";?>
+                                            <?php if($v['attr_type']==1):?>
+                                                <?php echo "属性价格<input type='text' name=gp[".$v['id']."][]";?>
+                                                <?php endif;?>
+                                        <?php endif;?>
+                                    </td></tr>
+                            <?php endforeach;?>
+                            <?php endif;?>
                             </table>
             </table>
             <!-- 商品图片 -->
@@ -330,6 +354,22 @@
         }
     }
 
+
+    function addNewAttr(o){
+
+        var parent_str = $(o).parent().parent();
+
+        var str = parent_str.clone();
+
+
+        if($(o).html()=='[+]') {
+            str.find('a').html('[-]');
+            parent_str.after(str);
+        }else{
+            parent_str.remove();
+        }
+
+    }
     //克隆复制添加多张图片
     function addNewImage(o){
         var parent_str = $(o).parent().parent();

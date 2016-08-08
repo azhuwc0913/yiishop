@@ -57,7 +57,7 @@ class Attribute extends \yii\db\ActiveRecord
     public function findAddGoodsAttrData($ids){
         $query = new Query();
 
-        return $data = $query->select('a.id attr_id, a.attr_name, a.attr_type, a.attr_value value')->from('attribute a')->where(['id'=>$ids])->all();
+        return $data = $query->select('a.id, a.attr_name, a.attr_type, a.attr_value value')->from('attribute a')->where(['id'=>$ids])->all();
 
     }
 }

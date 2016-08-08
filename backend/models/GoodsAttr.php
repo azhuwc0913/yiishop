@@ -123,7 +123,6 @@ class GoodsAttr extends \yii\db\ActiveRecord
 
                 $sql = "UPDATE `goods_attr` SET attr_value='$v1',attr_price='$price' WHERE id=$k";
 
-//                echo $sql.'<br />';
 
                 $con->createCommand($sql)->execute();
 

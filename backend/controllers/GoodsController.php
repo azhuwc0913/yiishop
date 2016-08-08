@@ -216,14 +216,12 @@ class GoodsController extends Controller
 
         //取出对应的数据
         if($add_goods_attr_ids){
-            $add_goods_attr_data = [(new Attribute())->findAddGoodsAttrData($add_goods_attr_ids)];
+            $add_goods_attr_data = (new Attribute())->findAddGoodsAttrData($add_goods_attr_ids);
         }
 
-        if($add_goods_attr_data){
-            $goods_attr_data = array_merge($goods_attr_data, $add_goods_attr_data);
-        }
 
-        dd($goods_attr_data);
+
+
         //取出商品图片和略缩图
         $goods_pics = (new GoodsPics())->get_goods_pics($id);
 
@@ -289,6 +287,15 @@ class GoodsController extends Controller
                $goods_attr_model->add_goods_attr($new_gas, $new_gps, $id);
             }
 
+
+            //判断是否有新添加的其它属性,然后将其放入数据库中
+            $goods_attr_data = isset($_POST['ga'])?$_POST['ga']:'';
+
+            $goods_attr_price = isset($_POST['gp'])?$_POST['gp']:'';
+
+            if($goods_attr_data && $goods_attr_price) {
+                (new GoodsAttr())->add_goods_attr($goods_attr_data, $goods_attr_price, $model->id);
+            }
             //添加新的商品图片
             //接收多张图片
             $files = UploadedFile::getInstances($goods_pic_model, 'pic');
@@ -298,7 +305,7 @@ class GoodsController extends Controller
 
              return $this->redirect(['view', 'id' => $model->id]);
         } else {
-            return $this->render('update', compact('id', 'model', 'member_price', 'goods_attr_data', 'goods_pics', 'cateData', 'typeData', 'member_data', 'goods_pic_model', 'attributeData'));
+            return $this->render('update', compact('add_goods_attr_data','id', 'model', 'member_price', 'goods_attr_data', 'goods_pics', 'cateData', 'typeData', 'member_data', 'goods_pic_model', 'attributeData'));
         }
     }
 
