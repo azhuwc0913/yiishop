@@ -50,7 +50,20 @@ class GoodsController extends Controller
     public function actionIndex()
     {
         $searchModel = new GoodsSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        $params = Yii::$app->request->queryParams;
+
+        $params['GoodsSearch']['promote_start_time'] = isset($params['GoodsSearch']['promote_start_time'])?$params['GoodsSearch']['promote_start_time']:'';
+
+        $params['GoodsSearch']['promote_end_time'] = isset($params['GoodsSearch']['promote_end_time'])?$params['GoodsSearch']['promote_end_time']:'';
+
+        if($params['GoodsSearch']['promote_start_time']){
+            $params['GoodsSearch']['promote_start_time'] = strtotime($params['GoodsSearch']['promote_start_time']);
+        }
+        if($params['GoodsSearch']['promote_end_time']){
+            $params['GoodsSearch']['promote_end_time'] = strtotime($params['GoodsSearch']['promote_end_time']);
+        }
+        $dataProvider = $searchModel->search($params);
 
         $count = $dataProvider->getCount();
 

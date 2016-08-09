@@ -72,24 +72,23 @@ class GoodsSearch extends Goods
             'cat_id' => $this->cat_id,
             'shop_price' => $this->shop_price,
             'market_price' => $this->market_price,
-            'is_promote' => $this->is_promote,
             'promote_price' => $this->promote_price,
-            'promote_start_time' => $this->promote_start_time,
-            'promote_end_time' => $this->promote_end_time,
-            'is_delete' => $this->is_delete,
-            'is_on_sale' => $this->is_on_sale,
-            'is_hot' => $this->is_hot,
-            'is_new' => $this->is_new,
-            'is_best' => $this->is_best,
-            'type_id' => $this->type_id,
-            'addtime' => $this->addtime,
+
+
         ]);
 
         $query->andFilterWhere(['like', 'goods_name', $this->goods_name])
             ->andFilterWhere(['like', 'logo', $this->logo])
             ->andFilterWhere(['like', 'sm_logo', $this->sm_logo])
-            ->andFilterWhere(['like', 'goods_desc', $this->goods_desc]);
-
+            ->andFilterWhere(['like', 'goods_desc', $this->goods_desc])
+            ->andFilterWhere(['>=', 'promote_start_time', $this->promote_start_time])
+            ->andFilterWhere(['<=', 'promote_end_time', $this->promote_end_time]);
+        if($this->promote_start_time){
+            $this->promote_start_time = date('Y-m-d H:i:s', $this->promote_start_time);
+        }
+        if($this->promote_end_time){
+            $this->promote_end_time = date('Y-m-d H:i:s', $this->promote_end_time);
+        }
         return $dataProvider;
     }
 }

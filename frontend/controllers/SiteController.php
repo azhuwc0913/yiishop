@@ -1,10 +1,10 @@
 <?php
 namespace frontend\controllers;
 
+use backend\models\Goods;
 use Yii;
 use yii\base\InvalidParamException;
 use yii\web\BadRequestHttpException;
-use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use common\models\LoginForm;
@@ -16,7 +16,7 @@ use frontend\models\ContactForm;
 /**
  * Site controller
  */
-class SiteController extends Controller
+class SiteController extends HomeController
 {
     /**
      * @inheritdoc
@@ -72,7 +72,13 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        //取出疯狂抢购商品
+        $goodsModel = new Goods();
+
+        $crazyData = $goodsModel->get_crazy_data();
+
+
+        return $this->render('index',compact('crazyData','data'));
     }
 
     /**

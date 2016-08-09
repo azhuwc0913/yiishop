@@ -95,4 +95,12 @@ class Goods extends \yii\db\ActiveRecord
         $sql = "DELETE FROM `goods_pics` WHERE `goods_id`=$goods_id";
         $con->createCommand($sql)->execute();
     }
+
+
+    public function get_crazy_data(){
+        $time = time();
+
+        //取出促销结束时间大于当前时间的商品
+        return $data = Goods::find()->where('promote_end_time>:time',[':time'=>$time])->asArray()->all();
+    }
 }

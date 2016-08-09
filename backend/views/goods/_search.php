@@ -15,23 +15,19 @@ use yii\widgets\ActiveForm;
         'method' => 'get',
     ]); ?>
 
-    <?= $form->field($model, 'id') ?>
 
-    <?= $form->field($model, 'goods_name') ?>
 
-    <?= $form->field($model, 'cat_id') ?>
+    <?= $form->field($model, 'goods_name')->textInput(['style'=>'width:180px;']) ?>
 
-    <?= $form->field($model, 'shop_price') ?>
-
-    <?= $form->field($model, 'market_price') ?>
+    <?= $form->field($model, 'cat_id')->dropDownList(\yii\helpers\ArrayHelper::map((new \backend\models\Category())->getTree(), 'id', 'cat_name'),['prompt'=>'请选择','style'=>'width:150px;']) ?>
 
     <?php // echo $form->field($model, 'is_promote') ?>
 
     <?php // echo $form->field($model, 'promote_price') ?>
 
-    <?php // echo $form->field($model, 'promote_start_time') ?>
+    <?php  echo $form->field($model, 'promote_start_time')->textInput(['id'=>'st','style'=>'width:180px;']) ?>
 
-    <?php // echo $form->field($model, 'promote_end_time') ?>
+    <?php  echo $form->field($model, 'promote_end_time')->textInput(['id'=>'se','style'=>'width:180px;']) ?>
 
     <?php // echo $form->field($model, 'is_delete') ?>
 
@@ -61,3 +57,16 @@ use yii\widgets\ActiveForm;
     <?php ActiveForm::end(); ?>
 
 </div>
+<?= Html::jsFile('@web/js/jquery.js');?>
+    <!--添加时间插件-->
+<?= Html::cssFile('@web/extension/datetimepicker/jquery-ui-1.9.2.custom.min.css');?>
+<?= Html::jsFile('@web/extension/datetimepicker/jquery-ui-1.9.2.custom.min.js');?>
+<?= Html::jsFile('@web/extension/datetimepicker/datepicker-zh_cn.js');?>
+<?=Html::cssFile('@web/extension/datetimepicker/time/jquery-ui-timepicker-addon.min.css');?>
+<?= Html::jsFile('@web/extension/datetimepicker/time/jquery-ui-timepicker-addon.min.js');?>
+<?= Html::jsFile('@web/extension/datetimepicker/time/i18n/jquery-ui-timepicker-addon-i18n.min.js');?>
+<script>
+$.timepicker.setDefaults($.timepicker.regional['zh-CN']);
+$("#st").datetimepicker();
+$("#se").datetimepicker();
+</script>
