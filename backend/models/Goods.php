@@ -30,6 +30,7 @@ use Yii;
 class Goods extends \yii\db\ActiveRecord
 {
 
+    const GOODS_LIMIT = 5;
     /**
      * @inheritdoc
      */
@@ -101,6 +102,21 @@ class Goods extends \yii\db\ActiveRecord
         $time = time();
 
         //取出促销结束时间大于当前时间的商品
-        return $data = Goods::find()->where('promote_end_time>:time',[':time'=>$time])->asArray()->all();
+        return $data = Goods::find()->where('promote_end_time>:time',[':time'=>$time])->limit(static::GOODS_LIMIT)->asArray()->all();
+    }
+
+    public function get_hot_data(){
+        return $data = Goods::find()->where('is_hot=:hot',[':hot'=>1])->asArray()->limit(static::GOODS_LIMIT)->all();
+
+    }
+
+    public function get_new_data(){
+        return $data = Goods::find()->where('is_new=:new',[':new'=>1])->asArray()->limit(static::GOODS_LIMIT)->all();
+
+    }
+
+    public function get_best_data(){
+        return $data = Goods::find()->where('is_best=:best',[':best'=>1])->asArray()->limit(static::GOODS_LIMIT)->all();
+
     }
 }

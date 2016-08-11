@@ -11,7 +11,7 @@ use yii\rest\Controller;
 
 class HomeController extends Controller
 {
-	public function setPageInfo($title, $description, $keywords, $showNav, $css=array(), $js=array()){
+	public function setPageInfo($title, $description, $keywords, $css=array(), $js=array(), $showNav=1){
 
 		return array(
 				'page_title'            => $title,

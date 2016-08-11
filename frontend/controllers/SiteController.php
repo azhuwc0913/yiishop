@@ -1,6 +1,7 @@
 <?php
 namespace frontend\controllers;
 
+use backend\models\Category;
 use backend\models\Goods;
 use Yii;
 use yii\base\InvalidParamException;
@@ -18,6 +19,8 @@ use frontend\models\ContactForm;
  */
 class SiteController extends HomeController
 {
+
+    public $enableCsrfValidation = false;
     /**
      * @inheritdoc
      */
@@ -61,6 +64,15 @@ class SiteController extends HomeController
             'captcha' => [
                 'class' => 'yii\captcha\CaptchaAction',
                 'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
+                'backColor'=>0x000000,//背景颜色
+                'maxLength' => 6, //最大显示个数
+                'minLength' => 5,//最少显示个数
+                'padding' => 5,//间距
+                'height'=>40,//高度
+                'width' => 130,  //宽度
+                'foreColor'=>0xffffff,     //字体颜色
+                'offset'=>4,        //设置字符偏移量 有效果
+                //'controller'=>'site',        //拥有这个动作的controller
             ],
         ];
     }
@@ -72,13 +84,35 @@ class SiteController extends HomeController
      */
     public function actionIndex()
     {
-        //取出疯狂抢购商品
+
         $goodsModel = new Goods();
 
+        $cateModel = new Category();
+        //取出疯狂抢购商品
         $crazyData = $goodsModel->get_crazy_data();
 
+        //取出热卖商品
+        $hotData = $goodsModel->get_hot_data();
 
-        return $this->render('index',compact('crazyData','data'));
+        //取出新品商品
+        $newData = $goodsModel->get_new_data();
+
+        //取出精品商品
+        $bestData = $goodsModel->get_best_data();
+
+        //取出所有分类下的数据
+        $cateData = $cateModel->get_all_category_data();
+
+        //dd($cateData);
+        $data = $this->setPageInfo('京西商城','京西商城','京西商城',['index'],['index']);
+
+        $view = Yii::$app->view;
+
+        $view->params['cateData'] = $cateData;
+
+        $view->params['data'] = $data;
+
+        return $this->render('index',compact('crazyData', 'hotData', 'newData', 'bestData', 'cateData'));
     }
 
     /**
@@ -91,11 +125,29 @@ class SiteController extends HomeController
         if (!Yii::$app->user->isGuest) {
             return $this->goHome();
         }
+        $data = $this->setPageInfo('京西商城','京西商城','京西商城',['login'],['login']);
 
+        $view = Yii::$app->view;
+
+        $view->params['data'] = $data;
         $model = new LoginForm();
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
+        if (Yii::$app->request->isPost) {
+            $model->attributes = $_POST['LoginForm'];
+
+            if($model->validate()) {
+                if($model->login()){
+                    dd($model);
+                }else{
+                    dd($model->errors);
+
+                }
+                return $this->goBack();
+            }else{
+                dd($model->errors);
+            }
+
         } else {
+
             return $this->render('login', [
                 'model' => $model,
             ]);

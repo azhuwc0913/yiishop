@@ -15,6 +15,7 @@ class Category extends \yii\db\ActiveRecord
 {
     const SCENARIOS_CREATE = 'create';
     const SCENARIOS_UPDATE = 'update';
+
     /**
      * @inheritdoc
      */
@@ -30,7 +31,7 @@ class Category extends \yii\db\ActiveRecord
     {
         return [
             [['cat_name', 'p_id'], 'required'],
-            ['cat_name', 'unique', 'class'=>'\backend\models\Category', 'on'=>'create'],
+            ['cat_name', 'unique', 'class' => '\backend\models\Category', 'on' => 'create'],
             [['p_id'], 'integer'],
 //            ['p_id', function($attribute, $params){
 //                if(in_array($this->attribute, $this->findChildren($this->attribute))){
@@ -54,56 +55,100 @@ class Category extends \yii\db\ActiveRecord
     }
 
 
-    public function getTree(){
+    public function getTree()
+    {
         $data = Category::find()->asArray()->all();
 
-        $res =  $this->_getTree($data);
+        $res = $this->_getTree($data);
 
         return $res;
     }
-    public function _getTree($data, $p_id = 0, $level = 0){
-       static $res = array();
 
-        foreach($data as $k=>$v){
+    public function _getTree($data, $p_id = 0, $level = 0)
+    {
+        static $res = [];
 
-            if($v['p_id'] == $p_id){
-               $v['level'] = $level;
+        foreach ($data as $k => $v) {
+
+            if ($v['p_id'] == $p_id) {
+                $v['level'] = $level;
                 $res[] = $v;
-                $this->_getTree($data, $v['id'], $level+1);
+                $this->_getTree($data, $v['id'], $level + 1);
             }
         }
+
         return $res;
     }
 
 
-    public function scenarios(){
-        $sescenarios =  [
+    public function scenarios()
+    {
+        $sescenarios = [
             self::SCENARIOS_CREATE => ['cat_name', 'p_id'],
             self::SCENARIOS_UPDATE => ['cat_name', 'p_id'],
         ];
 
-        return array_merge(parent::scenarios(),$sescenarios);
+        return array_merge(parent::scenarios(), $sescenarios);
 
     }
 
 
-
-
-    public function findChildren($id){
+    public function findChildren($id)
+    {
         $data = $data = Category::find()->asArray()->all();
         $res = $this->_findChildren($data, $id);
-        return array_merge($res, array($id));
+
+        return array_merge($res, [$id]);
     }
+
     //找到某个分类下的子分类
-    public function _findChildren($data, $id){
+    public function _findChildren($data, $id)
+    {
 
         static $res = [];
-        foreach($data as $v){
-            if($v['p_id'] == $id){
+        foreach ($data as $v) {
+            if ($v['p_id'] == $id) {
                 $res[] = $v['id'];
                 $this->_findChildren($data, $v['id']);
             }
         }
+
+        return $res;
+    }
+
+    public function get_all_category_data()
+    {
+        $data = $this->getTree();
+
+        $res = [];
+        foreach ($data as $k => $v) {
+            if ($v['p_id'] == 0) {
+
+
+                foreach ($data as $k1 => $v1) {
+                    if ($v1['p_id'] == $v['id']) {
+
+                        foreach ($data as $k2 => $v2) {
+                            if ($v2['p_id'] == $v1['id']) {
+
+                                $v1['children'][] = $v2;
+                                //var_dump($v1);
+                            }
+                        }
+                        $v['children'][] = $v1;
+                        //var_dump($v);
+                    }
+
+
+                }
+                $res[] = $v;
+
+            }
+
+
+        }
+
         return $res;
     }
 }
+

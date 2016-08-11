@@ -20,11 +20,11 @@ class AppAsset extends AssetBundle
         'style/footer.css'
     ];
     public $js = [
-        'js/jquery-1.8.3.min.js',
+       // 'js/jquery-1.8.3.min.js',
         'js/header.js'
     ];
     public $depends = [
-//        'yii\web\YiiAsset',
-//        'yii\bootstrap\BootstrapAsset',
+       'yii\web\YiiAsset',
+       'yii\bootstrap\BootstrapAsset',
     ];
 }

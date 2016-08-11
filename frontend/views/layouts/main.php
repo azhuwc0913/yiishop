@@ -17,9 +17,19 @@ AppAsset::register($this);
 <html lang="<?= Yii::$app->language ?>">
 <head>
     <meta charset="<?= Yii::$app->charset ?>">
+    <meta name="keywords" content="<?= Html::encode($this->params['data']['page_keywords']) ?>">
+    <meta name="description" content="<?= Html::encode($this->params['data']['page_description']) ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <?= Html::csrfMetaTags() ?>
-    <title><?= Html::encode($this->title) ?></title>
+    <title><?= Html::encode($this->params['data']['page_title']) ?></title>
+    <?= Html::jsFile('@web/js/jquery-1.8.3.min.js');?>
+    <?php foreach($this->params['data']['page_js'] as $v): ?>
+    <?= Html::jsFile('@web/js/'.$v.'.js');?>
+    <?php endforeach;?>
+    <?php foreach($this->params['data']['page_css'] as $v): ?>
+        <?= Html::cssFile('@web/style/'.$v.'.css');?>
+    <?php endforeach;?>
+
     <?php $this->head() ?>
 </head>
 <body>
@@ -32,7 +42,7 @@ AppAsset::register($this);
         </div>
         <div class="topnav_right fr">
             <ul>
-                <li>您好，欢迎来到京西！[<a href="login.html">登录</a>] [<a href="register.html">免费注册</a>] </li>
+                <li>您好，欢迎来到京西！[<a href="<?= \yii\helpers\Url::to(['site/login'])?>">登录</a>] [<a href="register.html">免费注册</a>] </li>
                 <li class="line">|</li>
                 <li>我的订单</li>
                 <li class="line">|</li>

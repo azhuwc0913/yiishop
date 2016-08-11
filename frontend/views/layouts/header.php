@@ -1,4 +1,16 @@
-<?php
+<<?php
+
+	/* @var $this \yii\web\View */
+	/* @var $content string */
+
+	use yii\helpers\Html;
+	use yii\bootstrap\Nav;
+	use yii\bootstrap\NavBar;
+	use yii\widgets\Breadcrumbs;
+	use frontend\assets\AppAsset;
+	use common\widgets\Alert;
+
+	AppAsset::register($this);
 ?>
 	<!-- 头部 start -->
 	<div class="header w1210 bc mt15">
@@ -99,23 +111,30 @@
 				</div>
 
 				<div class="cat_bd">
+					<?php foreach($this->params['cateData'] as $k=>$v):?>
 
-					<div class="cat item1">
-						<h3><a href="">图像、音像、数字商品</a> <b></b></h3>
+					<div class="cat <?php if($k==0){echo "item1";}?>">
+						<h3><a href=""><?= Html::encode($v['cat_name'])?></a> <b></b></h3>
 						<div class="cat_detail">
-							<dl class="dl_1st">
-								<dt><a href="">电子书</a></dt>
+						<?php if(isset($v['children'])):?>
+							<?php foreach ($v['children'] as $k1 => $v1):?>
+
+							<dl <?php if($k1==0){echo 'class="dl_1st"';}?>>
+								<dt><a href="<?= \yii\helpers\Url::to(['site/search','cat_id'=>$v['id']])?>"><?= Html::encode($v1['cat_name']);?></a></dt>
 								<dd>
-									<a href="">免费</a>
-									<a href="">小说</a>
-									<a href="">励志与成功</a>
-									<a href="">婚恋/两性</a>
-									<a href="">文学</a>
-									<a href="">经管</a>
-									<a href="">畅读VIP</a>
+
+									<?php if(isset($v1['children'])):?>
+									<?php foreach($v1['children'] as $k2=>$v2):?>
+
+									<a href=""><?= Html::encode($v2['cat_name'])?></a>
+
+									<?php endforeach;?>
+									<?php endif;?>
+
 								</dd>
 							</dl>
-
+							<?php endforeach;?>
+						<?php endif;?>
 							<dl>
 								<dt><a href="">数字音乐</a></dt>
 								<dd>
@@ -214,6 +233,7 @@
 						</div>
 					</div>
 
+					<?php endforeach;?>
 					<div class="cat">
 						<h3><a href="">家用电器</a><b></b></h3>
 						<div class="cat_detail">
@@ -347,19 +367,7 @@
 						</div>
 					</div>
 
-					<div class="cat">
-						<h3><a href="">食品饮料、保健食品</a><b></b></h3>
-						<div class="cat_detail none">
 
-						</div>
-					</div>
-
-					<div class="cat">
-						<h3><a href="">彩票、旅行、充值、票务</a><b></b></h3>
-						<div class="cat_detail none">
-
-						</div>
-					</div>
 
 				</div>
 
